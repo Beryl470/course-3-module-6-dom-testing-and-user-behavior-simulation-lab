@@ -1,15 +1,96 @@
-// Step 1: Simulate User Behavior
-// - Add event listeners for button clicks and form submissions.
-// - Use JavaScript to dynamically update the DOM based on user actions.
+// Utility Functions
+function createElement(tag, attributes = {}, text = '') {
+  const element = document.createElement(tag)
 
-// Step 2: DOM Manipulation Functions
-// - Implement functions to add, update, and remove DOM elements.
-// - Ensure all elements are dynamically created with appropriate attributes and content.
+  Object.keys(attributes).forEach(attr => {
+    element.setAttribute(attr, attributes[attr])
+  })
 
-// Step 3: Error Handling
-// - Display error messages in the DOM for invalid inputs or missing elements.
-// - Create reusable functions to handle common error cases.
+  if (text) {
+    element.textContent = text
+  }
 
-// Step 4: Reusable Utilities
-// - Create modular utility functions, such as createElement(tag, attributes).
-// - Ensure all functions follow DRY principles for maintainability.
+  return element
+}
+
+function displayError(message) {
+  const errorElement = document.getElementById('error-message')
+  if (!errorElement) return
+
+  errorElement.textContent = message
+  errorElement.classList.remove('hidden')
+}
+
+function clearError() {
+  const errorElement = document.getElementById('error-message')
+  if (!errorElement) return
+
+  errorElement.textContent = ''
+  errorElement.classList.add('hidden')
+}
+
+// DOM Manipulation Functions
+function addElementToDOM(elementId, text) {
+  const element = document.getElementById(elementId)
+  if (!element) return
+
+  element.textContent = text
+}
+
+function removeElementFromDOM(elementId) {
+  const element = document.getElementById(elementId)
+  if (element) {
+    element.remove()
+  }
+}
+
+// -------------------------------
+// User Behavior Simulation
+// -------------------------------
+function simulateClick(targetId, message) {
+  clearError()
+  addElementToDOM(targetId, message)
+}
+
+function handleFormSubmit(formId, targetId) {
+  const input = document.getElementById('user-input')
+
+  clearError()
+
+  if (!input || input.value.trim() === '') {
+    displayError('Input cannot be empty')
+    return
+  }
+
+  addElementToDOM(targetId, input.value)
+  input.value = ''
+}
+
+// -------------------------------
+// Event Listeners
+// -------------------------------
+document.addEventListener('DOMContentLoaded', () => {
+  const button = document.getElementById('simulate-click')
+  const form = document.getElementById('user-form')
+
+  if (button) {
+    button.addEventListener('click', () => {
+      simulateClick('dynamic-content', 'Button Clicked!')
+    })
+  }
+
+  if (form) {
+    form.addEventListener('submit', event => {
+      event.preventDefault()
+      handleFormSubmit('user-form', 'dynamic-content')
+    })
+  }
+})
+
+// Exports for Jest
+module.exports = {
+  addElementToDOM,
+  removeElementFromDOM,
+  simulateClick,
+  handleFormSubmit
+}
